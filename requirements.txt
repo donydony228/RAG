@@ -1,0 +1,24 @@
+# Core RAG Dependencies
+anthropic>=0.39.0                  # Claude API
+pinecone-client>=5.0.0             # Pinecone vector database
+sentence-transformers>=3.3.1       # Local embeddings
+torch>=2.5.1                       # PyTorch (for sentence-transformers)
+
+# PDF Processing
+pdfplumber>=0.11.4                 # PDF text extraction (recommended)
+PyPDF2>=3.0.1                      # Backup PDF parser
+
+# Configuration & Environment
+python-dotenv>=1.0.1               # Environment variables
+pyyaml>=6.0.2                      # YAML config parsing
+
+# Utilities
+tqdm>=4.67.1                       # Progress bars
+numpy>=2.2.0                       # Array operations
+tiktoken>=0.8.0                    # Token counting for Claude
+tenacity>=9.0.0                    # Retry logic with exponential backoff
+
+# Development & Testing
+pytest>=8.3.4                      # Testing framework
+pytest-cov>=6.0.0                  # Coverage reporting
+pytest-mock>=3.14.0                # Mocking
