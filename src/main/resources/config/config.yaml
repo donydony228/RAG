@@ -8,7 +8,7 @@ rag:
 
   retrieval:
     top_k: 5
-    similarity_threshold: 0.7
+    similarity_threshold: 0.3  # Lowered from 0.7 for small datasets
 
   generation:
     max_tokens: 1024
