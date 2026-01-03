@@ -1,17 +1,73 @@
-# RAG - Retrieval-Augmented Generation System
+# RAG - CV Question Answering System
 
-A production-ready Retrieval-Augmented Generation (RAG) system for enhanced AI responses with external knowledge integration.
+A production-ready Retrieval-Augmented Generation (RAG) system that uses Claude AI to answer questions based on your CV, with Pinecone vector database and local sentence transformer embeddings.
+
+## What is This?
+
+This system allows you to:
+- **Ingest your CV** (PDF format) into a vector database
+- **Ask questions** about your CV and get accurate AI-generated answers
+- **Have conversations** with context awareness across multiple turns
+- **Get source citations** showing which parts of your CV were used
+
+## Technology Stack
+
+- **LLM**: Anthropic Claude (claude-3-5-sonnet)
+- **Vector Database**: Pinecone (serverless)
+- **Embeddings**: Sentence Transformers (all-MiniLM-L6-v2, local, free)
+- **PDF Processing**: pdfplumber
+- **Interface**: Command-line (CLI)
 
 ## Quick Start
 
-1. **Read CLAUDE.md first** - Contains essential rules for Claude Code
-2. Follow the pre-task compliance checklist before starting any work
-3. Use proper module structure under `src/main/python/`
-4. Commit after every completed task
+### 1. Installation
 
-## What is RAG?
+```bash
+# Clone the repository (or use existing directory)
+cd /path/to/RAG
 
-Retrieval-Augmented Generation combines the power of large language models with external knowledge retrieval to provide more accurate, contextual, and up-to-date responses.
+# Create and activate virtual environment
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+### 2. Configuration
+
+Create a `.env` file in the project root with your API keys:
+
+```bash
+# Copy the example file
+cp .env.example .env
+
+# Edit .env with your actual API keys
+ANTHROPIC_API_KEY=your-anthropic-api-key-here
+PINECONE_API_KEY=your-pinecone-api-key-here
+PINECONE_ENVIRONMENT=us-east-1
+PINECONE_INDEX_NAME=cv-rag-index
+```
+
+### 3. Ingest Your CV
+
+Place your CV PDF in `data/raw/` and ingest it:
+
+```bash
+python -m src.main.python.main ingest --pdf data/raw/cv.pdf
+```
+
+### 4. Start Asking Questions!
+
+**Single question:**
+```bash
+python -m src.main.python.main query "What are my key programming skills?"
+```
+
+**Interactive conversation mode (recommended):**
+```bash
+python -m src.main.python.main interactive
+```
 
 ## Project Structure
 
@@ -46,62 +102,141 @@ RAG/
 └── logs/                  # Application logs
 ```
 
-## Features
+## Commands
 
-- **Modular Architecture**: Clean separation of concerns
-- **MLOps Ready**: Experiment tracking, model versioning
-- **Scalable**: Designed for production deployment
-- **Technical Debt Prevention**: Built-in safeguards
-- **GitHub Auto-Backup**: Automatic version control
+### Ingest Documents
 
-## Development Guidelines
-
-- **Always search first** before creating new files
-- **Extend existing** functionality rather than duplicating
-- **Use Task agents** for operations >30 seconds
-- **Single source of truth** for all functionality
-- **Python-based** with clean, modular architecture
-- **Commit frequently** after each completed feature
-
-## Getting Started
+Ingest a PDF document into the vector database:
 
 ```bash
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies (once requirements.txt is created)
-pip install -r requirements.txt
-
-# Run the application
-python -m src.main.python.main
-
-# Run tests
-pytest src/test/
-
-# Launch Jupyter for experiments
-jupyter notebook notebooks/
+python -m src.main.python.main ingest --pdf path/to/cv.pdf
 ```
 
-## Technology Stack
+This will:
+1. Extract text from the PDF
+2. Chunk the text into semantic pieces
+3. Generate embeddings using Sentence Transformers
+4. Upload to Pinecone vector store
 
-- **Language**: Python 3.8+
-- **AI/ML**: (To be determined based on implementation)
-- **Vector Database**: (To be determined)
-- **APIs**: (To be determined)
+### Query (Single Question)
 
-## Contributing
+Ask a single question:
 
-Before contributing:
-1. Read `CLAUDE.md` for development rules
-2. Follow the pre-task compliance checklist
-3. Use proper directory structure
-4. Commit after each feature
-5. Push to GitHub for backup
+```bash
+python -m src.main.python.main query "What programming languages does the candidate know?"
 
-## License
+# With verbose output (shows tokens, sources, performance)
+python -m src.main.python.main query "What is their work experience?" -v
+```
 
-(To be determined)
+### Interactive Mode
+
+Start a multi-turn conversation:
+
+```bash
+python -m src.main.python.main interactive
+```
+
+In interactive mode, you can:
+- Ask follow-up questions with conversation context
+- Type `clear` to reset the conversation
+- Type `stats` to see session information
+- Type `exit` or `quit` to leave
+
+**Example conversation:**
+```
+You: What programming languages does the candidate know?
+Assistant: Based on the CV, the candidate is proficient in Python, JavaScript, and Java...
+
+You: Tell me more about their Python experience.
+Assistant: Looking at their work history, they have 5 years of Python experience...
+```
+
+### Clear Index
+
+Clear all documents from the vector store:
+
+```bash
+# With confirmation prompt
+python -m src.main.python.main clear
+
+# Skip confirmation (for scripts)
+python -m src.main.python.main clear --confirm
+```
+
+### Show Statistics
+
+Display vector store statistics:
+
+```bash
+python -m src.main.python.main stats
+```
+
+## Features
+
+- **Local Embeddings**: No API costs for embeddings (Sentence Transformers)
+- **Conversation History**: Multi-turn conversations with context awareness
+- **Source Citations**: See which parts of the CV were used for answers
+- **Production Ready**: Comprehensive error handling and logging
+- **Configurable**: Easily adjust chunk size, retrieval parameters, etc.
+- **MLOps Structure**: Clean, maintainable codebase following best practices
+
+## Configuration
+
+Edit `src/main/resources/config/config.yaml` to customize:
+
+- **Chunking**: Strategy (paragraph/sentence), chunk size, overlap
+- **Retrieval**: Number of chunks (top_k), similarity threshold
+- **Generation**: Max tokens, temperature, system prompt
+- **Conversation**: Max history turns, persistence settings
+
+## Architecture
+
+```
+PDF → Extract Text → Chunk → Embed → Store in Pinecone
+                                           ↓
+Question → Embed → Retrieve Context → Claude API → Answer
+            ↑                             ↑
+            └─── Conversation History ────┘
+```
+
+## Troubleshooting
+
+### "API key not found"
+Make sure you've created `.env` file with your API keys. Copy from `.env.example`.
+
+### "PDF file not found"
+Check that the PDF path is correct. Use absolute paths or relative to project root.
+
+### "No relevant chunks found"
+Your question might be too different from CV content. Try rephrasing or check that the CV was ingested correctly.
+
+### Import errors
+Make sure you've installed all dependencies: `pip install -r requirements.txt`
+
+### Pinecone errors
+Check that your Pinecone API key is correct and you have an active account.
+
+## Development
+
+For developers working on this codebase:
+
+1. **Read CLAUDE.md first** - Contains essential development rules
+2. Follow the pre-task compliance checklist before coding
+3. Use proper module structure under `src/main/python/`
+4. Commit after every completed task
+5. Run tests: `pytest src/test/`
+
+## Project Goals
+
+This RAG system demonstrates:
+- ✅ Clean, modular architecture
+- ✅ Production-ready error handling
+- ✅ Comprehensive logging
+- ✅ Configuration-driven design
+- ✅ Type hints and documentation
+- ✅ Single source of truth principle
+- ✅ Technical debt prevention
 
 ---
 
