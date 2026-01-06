@@ -85,6 +85,9 @@ class Retriever:
             # Step 3: Convert results to Chunk objects
             chunks = []
             for result in results:
+                # Log actual scores for debugging
+                logger.info(f"Result score: {result['score']:.4f} (threshold: {self.similarity_threshold})")
+
                 # Filter by similarity threshold
                 if result["score"] < self.similarity_threshold:
                     logger.debug(

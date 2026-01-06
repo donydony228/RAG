@@ -52,7 +52,16 @@ class PDFService:
                 logger.info(f"PDF has {total_pages} pages")
 
                 for page_num, page in enumerate(pdf.pages, start=1):
-                    text = page.extract_text()
+                    # Use layout-aware extraction to preserve word spacing
+                    text = page.extract_text(layout=True, x_tolerance=2, y_tolerance=3)
+
+                    # Normalize excessive whitespace while preserving structure
+                    if text:
+                        # Replace multiple spaces with single space
+                        import re
+                        text = re.sub(r' +', ' ', text)
+                        # Normalize newlines (keep paragraph breaks)
+                        text = re.sub(r'\n\s*\n\s*\n+', '\n\n', text)
 
                     if text:
                         pages_data.append(

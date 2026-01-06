@@ -138,7 +138,7 @@ class Config:
         """Get Claude model name."""
         return os.getenv(
             "CLAUDE_MODEL",
-            self._get_nested("rag.generation.claude_model", "claude-3-5-sonnet-20241022"),
+            self._get_nested("rag.generation.claude_model", "claude-3-5-sonnet-20240620"),
         )
 
     @property
