@@ -8,7 +8,7 @@ rag:
 
   retrieval:
     top_k: 5
-    similarity_threshold: 0.15  # Lower threshold for CV semantic search
+    similarity_threshold: 0.05  # Very low threshold to retrieve more CV content
 
   generation:
     max_tokens: 1024
