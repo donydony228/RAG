@@ -4,12 +4,12 @@ from sentence_transformers import SentenceTransformer
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 # Settings for Sentence Transformers
-MODEL_NAME = "all-mpnet-base-v2"
+MODEL_NAME = "paraphrase-multilingual-mpnet-base-v2"
 
 # Configuration
-MAX_TOKENS = 384
-CHUNK_SIZE = 300
-CHUNK_OVERLAP = 50
+MAX_TOKENS = 128
+CHUNK_SIZE = 100
+CHUNK_OVERLAP = 20
 
 # Global variables for lazy loading
 _model = None
@@ -64,8 +64,8 @@ def count_tokens(text: str) -> int:
 
 def split_text_for_sentence_transformer(
     content: str,
-    chunk_size: int = 300,
-    overlap: int = 50
+    chunk_size: int = 100,
+    overlap: int = 20
 ) -> list[str]:
     """
     Split email content into chunks for Sentence Transformers.
@@ -88,7 +88,7 @@ def split_text_for_sentence_transformer(
     body_start = 1 if subject_line else 0
     body_content = '\n'.join(lines[body_start:])
 
-    # Approximate: 300 tokens is roughly 1200 characters
+    # Approximate: 100 tokens is roughly 400 characters
     chunk_size_chars = chunk_size * 4
     overlap_chars = overlap * 4
 
