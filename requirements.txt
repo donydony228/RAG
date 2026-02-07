@@ -4,9 +4,17 @@ pinecone>=5.0.0                    # Pinecone vector database (renamed from pine
 sentence-transformers>=3.3.1       # Local embeddings
 torch>=2.5.1                       # PyTorch (for sentence-transformers)
 
-# PDF Processing
-pdfplumber>=0.11.4                 # PDF text extraction (recommended)
-PyPDF2>=3.0.1                      # Backup PDF parser
+# LangGraph & LangChain
+langgraph
+langgraph-prebuilt
+langgraph-sdk
+langgraph-checkpoint-sqlite
+langsmith
+langchain-community
+langchain-core
+langchain-openai
+langchain-tavily
+langchain-text-splitters==0.2.0
 
 # Configuration & Environment
 python-dotenv>=1.0.1               # Environment variables
@@ -22,3 +30,14 @@ tenacity>=9.0.0                    # Retry logic with exponential backoff
 pytest>=8.3.4                      # Testing framework
 pytest-cov>=6.0.0                  # Coverage reporting
 pytest-mock>=3.14.0                # Mocking
+
+# Gmail API
+google-auth
+google-auth-oauthlib
+google-auth-httplib2
+google-api-python-client
+
+# API and Web Framework
+slack-sdk
+fastapi
+uvicorn
